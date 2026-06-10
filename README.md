@@ -1,10 +1,10 @@
-# 🩺 General Health Query Chatbot
+# General Health Query Chatbot
 
 A conversational AI chatbot that answers general health-related questions using prompt engineering and safety filters, built with the Anthropic Claude API in a Jupyter Notebook.
 
 ---
 
-## 📌 Task Objective
+##  Task Objective
 
 Build a health information chatbot that:
 - Accepts natural language health questions from users
@@ -16,60 +16,48 @@ The goal is **not** to replace a doctor — but to make general health informati
 
 ---
 
-## 📂 Dataset Used
+## Models Applied
+Google Gemini 3.5 Flash
+Type: Large Language Model (LLM)
 
-This project does not use a traditional dataset. Instead, it relies on:
+Access: Via Google GenAI Python SDK (google-genai library)
 
-| Source | Description |
-|---|---|
-| **Claude claude-opus-4-6 (LLM)** | Pre-trained on a broad range of medical literature, health articles, and general knowledge |
-| **Custom keyword lists** | Manually curated lists of dangerous and sensitive terms used for safety filtering |
-| **User input** | Real-time questions typed by the user during the chat session |
+Role: Generates all health-related responses
 
-No external CSV, database, or labelled dataset was required because the language model itself serves as the knowledge source.
+Configuration:
 
----
+Model Name: gemini-3.5-flash
 
-## 🤖 Models Applied
+Temperature: 0.5 — balances creative reasoning with factual consistency
 
-### Claude claude-opus-4-6 by Anthropic
-- **Type:** Large Language Model (LLM)
-- **Access:** Via Anthropic Python SDK (`anthropic` library)
-- **Role:** Generates all health-related responses
-- **Configuration:**
-  - `max_tokens: 512` — keeps responses concise
-  - `system prompt` — defines the assistant's persona, tone, and hard rules
-  - `messages` array — carries full conversation history for multi-turn memory
+System Prompt: Defines the assistant's persona, health-guidance scope, and safety boundaries
+
+Conversation History: Managed as a list of dictionaries (role and parts array) to ensure multi-turn memory and context retention
 
 ### Prompt Engineering Techniques Used
 | Technique | How it was applied |
 |---|---|
-| **Persona assignment** | "You are Hana, a friendly health information assistant" |
+| **Persona assignment** | "You are Gemma, a friendly health information assistant" |
 | **Rule injection** | Explicit do/don't rules inside the system prompt |
 | **Conditional prompting** | Extra empathy instructions added dynamically for sensitive topics |
 | **Conversation history** | Full message history passed on every API call for contextual replies |
 
 ---
 
-## 🛡️ Safety Design
+## Safety Design
 
-Two-tier safety filter applied before and during every API call:
+Safety filter applied before and during every API call:
 
-### Tier 1 — Hard Block
+### Hard Block
 Queries containing keywords like `overdose`, `kill myself`, `lethal dose` are blocked entirely and never reach the AI. The user receives a compassionate redirect message instead.
-
-### Tier 2 — Sensitive Topic Handling
-Queries mentioning topics like `depression`, `anxiety`, or `addiction` are allowed through, but the system prompt is dynamically extended with extra instructions to respond with empathy and prioritize professional help recommendations.
 
 ---
 
-## 📊 Key Results and Findings
+## Key Results and Findings
 
 ### What Worked Well
 - **Prompt engineering significantly shaped output quality.** Adding clear persona rules and constraints produced more consistent, safe, and friendly responses compared to a plain API call with no system prompt.
-- **Two-tier safety was more effective than a single blocklist.** A blanket block on all mental health terms would refuse legitimate questions like "what is anxiety?". Separating hard blocks from sensitive handling gave better coverage without over-blocking.
 - **Conversation history made the chatbot feel natural.** Without history, follow-up questions like "is that safe for kids?" had no context. With history, Hana correctly linked the follow-up to the previous topic.
-- **The `SENSITIVE_EXTRA` prompt addition worked as expected.** When mental health keywords were detected, responses became noticeably more empathetic in tone.
 
 ### Limitations Observed
 - **Keyword filters are imperfect.** A user could rephrase a dangerous query to bypass the filter. A more robust approach would use a second LLM call to classify intent.
@@ -87,24 +75,18 @@ Queries mentioning topics like `depression`, `anxiety`, or `addiction` are allow
 
 ---
 
-## 🚀 How to Run
+## How to run this notebook
+Clone this repository.
 
-1. Install dependencies:
-   ```bash
-   pip install anthropic ipywidgets
-   ```
+Create a file named .env in the root directory.
 
-2. Get your API key from [console.anthropic.com](https://console.anthropic.com)
+Add your API key to the file: GEMINI_API_KEY=your_api_key_here
 
-3. Open `health_chatbot.ipynb` in Jupyter Notebook
-
-4. Run cells **1 through 5 in order**
-
-5. Type your question in the input box that appears after Cell 5
+Run the notebook cells; the client will automatically detect your key.
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```
 health-chatbot/
